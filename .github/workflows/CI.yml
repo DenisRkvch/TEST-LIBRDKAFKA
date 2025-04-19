@@ -3,8 +3,8 @@ name: C++ CI
 on: [push, pull_request]
 
 env:
-  VCPKG_DIR: ./vcpkg  # Локальная папка для vcpkg
-  VCPKG_TRIPLET: x64-windows  # Триплет (архитектура)
+  VCPKG_DIR: ./vcpkg
+  VCPKG_TRIPLET: x64-windows
 
 jobs:
   build:
@@ -20,10 +20,17 @@ jobs:
           & "$env:VCPKG_DIR\bootstrap-vcpkg.bat"
           echo "$env:VCPKG_DIR\vcpkg.exe" >> $env:GITHUB_PATH
 
-      - name: Install dependencies (librdkafka)
+      - name: Install dependencies
         run: vcpkg install librdkafka:$env:VCPKG_TRIPLET
 
-      - name: Build with CMake
+      - name: Check RdKafka config files
+        run: ls $env:VCPKG_DIR/installed/$env:VCPKG_TRIPLET/share/rdkafka
+
+      - name: Configure CMake
         run: |
-          cmake -B build -S . -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_DIR/scripts/buildsystems/vcpkg.cmake"
-          cmake --build build --config Release
+          cmake -B build -S . `
+            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_DIR/scripts/buildsystems/vcpkg.cmake" `
+            -DCMAKE_PREFIX_PATH="$env:VCPKG_DIR/installed/$env:VCPKG_TRIPLET"
+
+      - name: Build the project
+        run: cmake --build build --config Release

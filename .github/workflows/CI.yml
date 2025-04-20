@@ -3,7 +3,7 @@ name: C++ CI
 on: [push, pull_request]
 
 env:
-  VCPKG_DIR: ${{ github.workspace }}/vcpkg  # Путь относительно рабочей директории
+  VCPKG_DIR: ./vcpkg  # Путь относительно рабочей директории
   VCPKG_TRIPLET: x64-windows
 
 jobs:
@@ -17,7 +17,7 @@ jobs:
       - name: Install vcpkg
         run: |
           git clone https://github.com/microsoft/vcpkg $env:VCPKG_DIR
-          & "$env:VCPKG_DIR\bootstrap-vcpkg.bat"
+          & "$env:VCPKG_DIR\bootstrap-vcpkg.bat" -disableMetrics
           echo "$env:VCPKG_DIR" >> $env:GITHUB_PATH
 
       - name: Install dependencies

@@ -18,7 +18,7 @@ jobs:
         run: |
           git clone https://github.com/microsoft/vcpkg $env:VCPKG_DIR
           & "$env:VCPKG_DIR\bootstrap-vcpkg.bat" -disableMetrics
-          echo "$env:VCPKG_DIR" >> $env:GITHUB_PATH
+          echo "$env:VCPKG_DIR\vcpkg.exe" >> $env:GITHUB_PATH
 
       - name: Install dependencies
         run: vcpkg install librdkafka --triplet $env:VCPKG_TRIPLET

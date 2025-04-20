@@ -17,14 +17,15 @@ jobs:
       - name: Install vcpkg
         run: |
           git clone https://github.com/microsoft/vcpkg $env:VCPKG_DIR
+          git -C $env:VCPKG_DIR pull
           & "$env:VCPKG_DIR\bootstrap-vcpkg.bat"
           echo "$env:VCPKG_DIR\vcpkg.exe" >> $env:GITHUB_PATH
 
       - name: Install dependencies
-        run: vcpkg install librdkafka:$env:VCPKG_TRIPLET
+        run: vcpkg install librdkafka --triplet $env:VCPKG_TRIPLET
 
       - name: Check RdKafka config files
-        run: ls $env:VCPKG_DIR/installed/$env:VCPKG_TRIPLET/share/librdkafka
+        run: ls $env:VCPKG_DIR/installed/$env:VCPKG_TRIPLET/share/rdkafka
 
       - name: Configure CMake
         run: |

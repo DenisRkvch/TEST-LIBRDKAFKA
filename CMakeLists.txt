@@ -17,10 +17,18 @@ else()
     # Используем pkg-config для поиска библиотеки
     find_package(PkgConfig REQUIRED)
     pkg_search_module(RDKAFKA REQUIRED rdkafka)
+    pkg_search_module(RDKAFKACPP REQUIRED rdkafka++)  # ← Добавьте эту строку
 
-    target_include_directories(test_kafka PRIVATE ${RDKAFKA_INCLUDE_DIRS})
-    target_link_directories(test_kafka PRIVATE ${RDKAFKA_LIBRARY_DIRS})
-    target_link_libraries(test_kafka PRIVATE ${RDKAFKA_LIBRARIES})
+
+    target_include_directories(test_kafka PRIVATE 
+        ${RDKAFKA_INCLUDE_DIRS}
+        ${RDKAFKACPP_INCLUDE_DIRS}  # ← И эту
+    )
+
+    target_link_libraries(test_kafka PRIVATE 
+        ${RDKAFKA_LIBRARIES}
+        ${RDKAFKACPP_LIBRARIES}     # ← И эту
+    )
 endif()
 
 

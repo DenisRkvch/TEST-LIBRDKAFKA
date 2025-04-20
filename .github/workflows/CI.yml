@@ -24,16 +24,15 @@ jobs:
       - name: Install dependencies
         run: vcpkg install librdkafka --triplet $env:VCPKG_TRIPLET
 
-      - name: Check RdKafka config files new
-        run: ls $env:VCPKG_DIR/installed/$env:VCPKG_TRIPLET/share/rdkafka
 
-      - name: Check RdKafka config files old
+
+      - name: Check RdKafka config files new
         run: ls C:/vcpkg/installed/$env:VCPKG_TRIPLET/share/rdkafka
 
       - name: Configure CMake
         run: |
           cmake -B build -S . -A x64 `
-            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_DIR/scripts/buildsystems/vcpkg.cmake"
+            -DCMAKE_TOOLCHAIN_FILE="C:/vcpkg/scripts/buildsystems/vcpkg.cmake"
 
       - name: Build the project
         run: cmake --build build --config Release

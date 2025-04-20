@@ -3,7 +3,7 @@ name: C++ CI
 on: [push, pull_request]
 
 env:
-  VCPKG_DIR: ./vcpkg
+  VCPKG_DIR: ${{ github.workspace }}/vcpkg  # Четкий путь без магии
   VCPKG_TRIPLET: x64-windows
 
 jobs:
@@ -14,16 +14,26 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      # Установка vcpkg
+      - name: Install vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg $env:VCPKG_DIR
+          & "$env:VCPKG_DIR\bootstrap-vcpkg.bat" -disableMetrics
+          echo "$env:VCPKG_DIR\vcpkg.exe" >> $env:GITHUB_PATH  # Добавляем в PATH
+
+      # Установка зависимостей
       - name: Install dependencies
         run: vcpkg install librdkafka --triplet $env:VCPKG_TRIPLET
 
-      - name: Check RdKafka config files new
-        run: ls C:/vcpkg/installed/$env:VCPKG_TRIPLET/share/rdkafka
+      # Проверка файлов (используем VCPKG_DIR!)
+      - name: Check RdKafka config files
+        run: ls "$env:VCPKG_DIR/installed/$env:VCPKG_TRIPLET/share/rdkafka"
 
+      # Настройка CMake с корректным путем
       - name: Configure CMake
         run: |
           cmake -B build -S . -A x64 `
-            -DCMAKE_TOOLCHAIN_FILE="C:/vcpkg/scripts/buildsystems/vcpkg.cmake"
+            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_DIR/scripts/buildsystems/vcpkg.cmake"
 
       - name: Build the project
         run: cmake --build build --config Release

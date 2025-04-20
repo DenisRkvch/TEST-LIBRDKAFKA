@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
 project(test_kafka)
 
+# стандарт C++
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # Создаём исполняемый файл
 add_executable(test_kafka src/main.cpp)
 
@@ -16,19 +20,15 @@ if(WIN32)
 else()
     # Используем pkg-config для поиска библиотеки
     find_package(PkgConfig REQUIRED)
-    pkg_search_module(RDKAFKA REQUIRED rdkafka)
-    pkg_search_module(RDKAFKACPP REQUIRED rdkafka++)  # ← Добавьте эту строку
+    pkg_check_modules(RDKAFKA REQUIRED IMPORTED_TARGET rdkafka)
+    pkg_check_modules(RDKAFKACPP REQUIRED IMPORTED_TARGET rdkafka++)
 
-
-    target_include_directories(test_kafka PRIVATE 
-        ${RDKAFKA_INCLUDE_DIRS}
-        ${RDKAFKACPP_INCLUDE_DIRS}  # ← И эту
-    )
-
+    # Автоматически добавляет include dirs и libs
     target_link_libraries(test_kafka PRIVATE 
-        ${RDKAFKA_LIBRARIES}
-        ${RDKAFKACPP_LIBRARIES}     # ← И эту
+        PkgConfig::RDKAFKA 
+        PkgConfig::RDKAFKACPP
     )
+
 endif()
 
 

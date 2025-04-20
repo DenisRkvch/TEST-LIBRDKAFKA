@@ -8,6 +8,7 @@ env:
 
 jobs:
   windows-build:
+    name: Windows x64
     runs-on: windows-latest
 
     steps:

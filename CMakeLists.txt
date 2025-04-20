@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(test_kafka)
 
 # Ищем librdkafka
-find_package(RdKafka CONFIG REQUIRED)  
+find_package(RdKafka REQUIRED)  
 
 # Создаём исполняемый файл
 add_executable(test_kafka src/main.cpp)

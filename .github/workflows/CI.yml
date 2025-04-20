@@ -1,9 +1,5 @@
-name: C++ CI
-
-on: [push, pull_request]
-
 env:
-  VCPKG_DIR: ./vcpkg
+  VCPKG_ROOT: ${{ github.workspace }}/vcpkg
   VCPKG_TRIPLET: x64-windows
 
 jobs:
@@ -16,23 +12,21 @@ jobs:
 
       - name: Install vcpkg
         run: |
-          git clone https://github.com/microsoft/vcpkg $env:VCPKG_DIR
-          git -C $env:VCPKG_DIR pull
-          & "$env:VCPKG_DIR\bootstrap-vcpkg.bat"
-          echo "$env:VCPKG_DIR\vcpkg.exe" >> $env:GITHUB_PATH
+          git clone https://github.com/microsoft/vcpkg $env:VCPKG_ROOT
+          & "$env:VCPKG_ROOT\bootstrap-vcpkg.bat" -disableMetrics
+          echo "$env:VCPKG_ROOT\vcpkg.exe" >> $env:GITHUB_PATH
 
       - name: Install dependencies
         run: vcpkg install librdkafka --triplet $env:VCPKG_TRIPLET
 
-
-
-      - name: Check RdKafka config files new
-        run: ls C:/vcpkg/installed/$env:VCPKG_TRIPLET/share/rdkafka
+      - name: Check RdKafka files
+        run: ls $env:VCPKG_ROOT/installed/$env:VCPKG_TRIPLET/share/rdkafka
 
       - name: Configure CMake
         run: |
           cmake -B build -S . -A x64 `
-            -DCMAKE_TOOLCHAIN_FILE="C:/vcpkg/scripts/buildsystems/vcpkg.cmake"
+            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" `
+            -DVCPKG_TARGET_TRIPLET=$env:VCPKG_TRIPLET
 
-      - name: Build the project
+      - name: Build
         run: cmake --build build --config Release

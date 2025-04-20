@@ -28,9 +28,8 @@ jobs:
 
       - name: Configure CMake
         run: |
-          cmake -B build -S . `
-            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_DIR/scripts/buildsystems/vcpkg.cmake" `
-            -DCMAKE_PREFIX_PATH="$env:VCPKG_DIR/installed/$env:VCPKG_TRIPLET"
+          cmake -B build -S . -A x64 `
+            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_DIR/scripts/buildsystems/vcpkg.cmake"
 
       - name: Build the project
         run: cmake --build build --config Release

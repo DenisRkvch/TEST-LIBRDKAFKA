@@ -3,7 +3,7 @@ project(test_kafka)
 
 # Указываем vcpkg как инструмент для поиска библиотек
 #set(CMAKE_TOOLCHAIN_FILE "C:/Users/den24/source/repos/kafka-project/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
-set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
+#set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
 # Ищем librdkafka
 find_package(RdKafka CONFIG REQUIRED)  

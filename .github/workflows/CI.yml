@@ -24,7 +24,7 @@ jobs:
         run: vcpkg install librdkafka:$env:VCPKG_TRIPLET
 
       - name: Check RdKafka config files
-        run: ls $env:VCPKG_DIR/installed/$env:VCPKG_TRIPLET/share/rdkafka
+        run: ls $env:VCPKG_DIR/installed/$env:VCPKG_TRIPLET/share/librdkafka
 
       - name: Configure CMake
         run: |

@@ -3,7 +3,7 @@ name: C++ CI
 on: [push, pull_request]
 
 env:
-  VCPKG_DIR: ${{ github.workspace }}/vcpkg  # Четкий путь без магии
+  VCPKG_DIR: ${{ github.workspace }}/vcpkg
   VCPKG_TRIPLET: x64-windows
 
 jobs:
@@ -14,22 +14,28 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # Установка vcpkg
       - name: Install vcpkg
         run: |
           git clone https://github.com/microsoft/vcpkg $env:VCPKG_DIR
+          Get-ChildItem -Path $env:VCPKG_DIR
           & "$env:VCPKG_DIR\bootstrap-vcpkg.bat" -disableMetrics
-          echo "$env:VCPKG_DIR\vcpkg.exe" >> $env:GITHUB_PATH  # Добавляем в PATH
+          Get-ChildItem -Path "$env:VCPKG_DIR\vcpkg.exe"
+          echo "$env:VCPKG_DIR" >> $env:GITHUB_PATH
 
-      # Установка зависимостей
       - name: Install dependencies
-        run: vcpkg install librdkafka --triplet $env:VCPKG_TRIPLET
+        run: |
+          & "$env:VCPKG_DIR\vcpkg.exe" install librdkafka --triplet $env:VCPKG_TRIPLET
+          Get-ChildItem -Path "$env:VCPKG_DIR\installed\$env:VCPKG_TRIPLET"
 
-      # Проверка файлов (используем VCPKG_DIR!)
       - name: Check RdKafka config files
-        run: ls "$env:VCPKG_DIR/installed/$env:VCPKG_TRIPLET/share/rdkafka"
+        run: |
+          $path = "$env:VCPKG_DIR\installed\$env:VCPKG_TRIPLET\share\rdkafka"
+          if (Test-Path $path) {
+              Get-ChildItem $path
+          } else {
+              Write-Error "Directory $path does not exist!"
+          }
 
-      # Настройка CMake с корректным путем
       - name: Configure CMake
         run: |
           cmake -B build -S . -A x64 `

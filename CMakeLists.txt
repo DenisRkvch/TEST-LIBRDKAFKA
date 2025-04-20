@@ -12,10 +12,9 @@ add_executable(test_kafka src/main.cpp)
 if(WIN32)
     find_package(RdKafka REQUIRED)  
     # Линкуем librdkafka
-    target_link_libraries(test_kafka PRIVATE 
-        RdKafka::rdkafka 
-        RdKafka::rdkafka++ 
-    )
+
+    set(RDKAFKAC_LIB RdKafka::rdkafka)
+    set(RDKAFKACPP_LIB RdKafka::rdkafka++)
 
 else()
     # Используем pkg-config для поиска библиотеки
@@ -23,15 +22,14 @@ else()
     pkg_check_modules(RDKAFKA REQUIRED IMPORTED_TARGET rdkafka)
     pkg_check_modules(RDKAFKACPP REQUIRED IMPORTED_TARGET rdkafka++)
 
-    # Автоматически добавляет include dirs и libs
-    target_link_libraries(test_kafka PRIVATE 
-        PkgConfig::RDKAFKA 
-        PkgConfig::RDKAFKACPP
-    )
-
+    set(RDKAFKAC_LIB PkgConfig::RDKAFKA)
+    set(RDKAFKACPP_LIB PkgConfig::RDKAFKACPP)
 endif()
 
-
+    target_link_libraries(test_kafka PRIVATE 
+        ${RDKAFKAC_LIB}
+        ${RDKAFKACPP_LIB}
+    )
 
 
 
